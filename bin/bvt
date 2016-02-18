@@ -1,0 +1,8 @@
+#!/usr/bin/env ruby
+
+require 'bvt'
+
+fed = Bvt.load_federation(ARGV[0])
+
+puts "The name of the loaded federation is #{fed.name}"
+puts "It has #{fed.leagues.length} leagues"
