@@ -6,13 +6,16 @@ require "date"
 
 class Bvt
   def self.load_federation(federation_name)
-    if federation_name.downcase == "vvb"
-      puts "[INFO] loading #{federation_name}"
+    #make sure this function returns at least nil
+    f = nil
+    puts "[INFO] loading #{federation_name}"
 
+    if federation_name.downcase == "vvb"
       leagues = VvbLoader.load
       f = Federation.new("VVB", leagues)
-      return f
     end
+
+    return f
   end
 end
 
