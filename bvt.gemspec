@@ -1,3 +1,7 @@
+# coding: utf-8
+lib = File.expand_path('../lib', __FILE__)
+$LOAD_PATH.unshift(lib) unless $LOAD_PATH.include?(lib)
+
 Gem::Specification.new do |s|
   s.name        = 'bvt'
   s.version     = '0.0.0'
@@ -5,7 +9,7 @@ Gem::Specification.new do |s|
   s.summary     = "Belgian Volley Tools"
   s.description = "Tools to interact with the various belgian volleyball federations' data"
   s.authors     = ["HerrSubset"]
-  s.files       = ["lib/bvt.rb", "lib/bvt/league.rb", "lib/bvt/game.rb", "lib/bvt/federation.rb", "lib/bvt/vvb_loader.rb"]
-  s.executables   << "bvt"
+  s.files       = Dir.glob("{bin,lib}/**/*")
+  s.executables = ["bvt"]
   s.license     = 'MIT'
 end
