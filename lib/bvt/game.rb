@@ -24,10 +24,10 @@ class Bvt::Game
 
   #return this game's info in a single string
   def to_s
-    res = "#{date.strftime('%d/%m/%Y')}\t#{@home_team} - #{@away_team}"
+    res = "#{@id}  #{date.strftime('%d/%m/%Y')}\t#{@home_team} - #{@away_team}"
 
     if @home_sets != 0 || @away_sets != 0
-      res += "\t#{@home_sets}-#{@away_sets}"
+      res += "   #{@home_sets}-#{@away_sets}"
     end
 
     return res

@@ -1,9 +1,3 @@
-require "net/http"
-require "nokogiri"
-require "date"
-
-
-
 class Bvt
   def self.load_federation(federation_name)
     #make sure this function returns at least nil

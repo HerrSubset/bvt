@@ -1,3 +1,8 @@
+require "net/http"
+require "nokogiri"
+require "date"
+
+
 class Bvt::VvbLoader
   #extracts the number of won sets by the home and away team for a score string
   def self.extractSets(scoreString)
@@ -27,7 +32,7 @@ class Bvt::VvbLoader
   	home_sets, away_sets = extractSets(child.text)
 
   	#create new game with the retrieved information
-  	return Bvt::Game.new(home, away, home_sets, away_sets, date)
+  	return Bvt::Game.new(code, home, away, date, home_sets, away_sets)
   end
 
 
