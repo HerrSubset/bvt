@@ -5,7 +5,7 @@ require 'bvt'
 fed = Bvt.load_federation(ARGV[0])
 
 if fed == nil
-  puts "This federation was not found"
+  puts "[ERROR] This federation was not found"
   exit
 end
 
