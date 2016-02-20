@@ -17,4 +17,17 @@ class Bvt::Game
   attr_reader :away_sets
   attr_reader :location
   attr_reader :date
+
+
+
+  #return this game's info in a single string
+  def to_s
+    res = "#{date.strftime('%d/%m/%Y')}\t#{@home_team} - #{@away_team}"
+
+    if @home_sets != 0 || @away_sets != 0
+      res += "\t#{@home_sets}-#{@away_sets}"
+    end
+
+    return res
+  end
 end
