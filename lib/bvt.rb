@@ -7,6 +7,10 @@ class Bvt
     if federation_name.downcase == "vvb"
       leagues = VvbLoader.load
       f = Federation.new("VVB", leagues)
+
+    elsif federation_name.downcase == "avf"
+      leagues = AvfLoader.load
+      f = Federation.new("AVF", leagues)
     end
 
     return f
@@ -19,3 +23,4 @@ require "bvt/league.rb"
 require "bvt/game.rb"
 require "bvt/federation.rb"
 require "bvt/vvb_loader.rb"
+require "bvt/avf_loader.rb"
