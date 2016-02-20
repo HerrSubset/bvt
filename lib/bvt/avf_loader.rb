@@ -15,13 +15,48 @@ class Bvt::AvfLoader
   end
 
   #download the AVF games in JSON format and parse them into an array
-  def self.get_games
+  def self.get_games_section(start_date, end_date)
+    format = "%Y-%m-%d"
+    s = start_date.strftime(format)
+    e = end_date.strftime(format)
     json_file = Net::HTTP.get('volley-avf.be',
-                '/bolt/kalenders?co=0&cl=0&v=2015-08-31&t=2016-07-31&f=json')
+                "/bolt/kalenders?co=0&cl=0&v=#{s}&t=#{e}&f=json")
 
     games = JSON.parse(json_file)
     return games["items"]
   end
+
+
+  def self.get_season_dates
+    today = Date.today
+    end_date = nil
+    start_date = nil
+
+    if today.month > 5
+      #download season that's running this and following year
+      start_date = Date.new(today.year, 8, 31)
+      end_date = Date.new(today.year + 1, 5, 31)
+
+    else
+      #download season running this and the previous year
+      start_date = Date.new(today.year - 1, 8, 31)
+      end_date = Date.new(today.year, 5, 31)
+    end
+  end
+
+
+
+  #we can only load 500 AVF games at a time, so we have to build the games
+  #array piece by piece
+  def self.get_games
+    #get the season start and end date
+    season_start, season_end = get_season_dates
+
+    return get_games_section(Date.new(2015,8,31), Date.new(2016,5,31))
+  end
+
+
+
 
 
   #returns an array with all the leagues in the AVF federation
