@@ -1,6 +1,7 @@
 class Bvt::Game
   #constructor for a game
-  def initialize(home_team, away_team, home_sets, away_sets,  date)
+  def initialize(id, home_team, away_team, date, home_sets = 0, away_sets = 0)
+    @id = id
     @home_team = home_team
     @away_team = away_team
     @home_sets = home_sets
@@ -11,6 +12,7 @@ class Bvt::Game
 
 
   #getters
+  attr_reader :id
   attr_reader :home_team
   attr_reader :away_team
   attr_reader :home_sets
