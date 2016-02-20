@@ -11,8 +11,21 @@ class Bvt::AvfLoader
     d = Date.parse(game_hash["date"])
     id = game_hash["id"]
 
-    return Bvt::Game.new(id, home_t, away_t, d)
+
+    #add scores if they're available
+    if game_hash["score"] != "-"
+      home_s = game_hash["score"][0]
+      away_s = game_hash["score"][2]
+
+      return Bvt::Game.new(id, home_t, away_t, d, home_s, away_s)
+
+    #return game without scores
+    else
+      return Bvt::Game.new(id, home_t, away_t, d)
+    end
   end
+
+
 
   #download the AVF games in JSON format and parse them into an array
   def self.get_games_section(start_date, end_date)
@@ -26,6 +39,7 @@ class Bvt::AvfLoader
     games = JSON.parse(json_file)
     return games["items"]
   end
+
 
 
   #returns the start and end date of a season. The dates are those of the
@@ -79,10 +93,9 @@ class Bvt::AvfLoader
 
     end while tmp_games.length == 500
 
+    puts "[INFO] There are #{games.length} games in the AVF federation"
     return games
   end
-
-
 
 
 
