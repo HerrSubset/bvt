@@ -16,6 +16,7 @@ class Bvt::AvfLoader
 
   #download the AVF games in JSON format and parse them into an array
   def self.get_games_section(start_date, end_date)
+    puts "[INFO] downloading from #{start_date.to_s} onwards"
     format = "%Y-%m-%d"
     s = start_date.strftime(format)
     e = end_date.strftime(format)
@@ -27,6 +28,8 @@ class Bvt::AvfLoader
   end
 
 
+  #returns the start and end date of a season. The dates are those of the
+  #current season, and otherwise the next one.
   def self.get_season_dates
     today = Date.today
     end_date = nil
@@ -42,6 +45,8 @@ class Bvt::AvfLoader
       start_date = Date.new(today.year - 1, 8, 31)
       end_date = Date.new(today.year, 5, 31)
     end
+
+    return start_date, end_date
   end
 
 
@@ -49,10 +54,32 @@ class Bvt::AvfLoader
   #we can only load 500 AVF games at a time, so we have to build the games
   #array piece by piece
   def self.get_games
+    #container array for storing all games
+    games = Array.new
+
     #get the season start and end date
     season_start, season_end = get_season_dates
 
-    return get_games_section(Date.new(2015,8,31), Date.new(2016,5,31))
+    tmp_games = nil
+
+    #keep looping until all games were downloaded
+    begin
+      tmp_games = get_games_section(season_start, season_end)
+
+      #add games if they're not in there yet
+      tmp_games.each do |g|
+        if !games.include?(g)
+          games.push(g)
+        end
+      end
+
+      #get latest date of the last downloaded part and use that as input for
+      #the next download
+      season_start = Date.parse(tmp_games[-1]["date"])
+
+    end while tmp_games.length == 500
+
+    return games
   end
 
 
