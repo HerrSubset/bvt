@@ -89,7 +89,7 @@ class Bvt::AvfLoader
 
       #get latest date of the last downloaded part and use that as input for
       #the next download
-      season_start = Date.parse(tmp_games[-1]["date"])
+      season_start = Date.parse(tmp_games[-1]["date"]) - 1
 
     end while tmp_games.length == 500
 
