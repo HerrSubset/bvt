@@ -32,4 +32,9 @@ class Bvt::Game
 
     return res
   end
+
+
+  def ==(game)
+    return @id == game.id
+  end
 end
