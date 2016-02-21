@@ -45,7 +45,6 @@ class Bvt::VvbLoader
   	#write html to file
   	post_options = {"Reeks" => "%", "Stamnummer" => "%", "Week" => "0"}
   	response = Net::HTTP.post_form(uri, post_options)
-  	puts "[INFO] download completed"
 
 
   	#let nokogiri parse the received html
@@ -94,7 +93,6 @@ class Bvt::VvbLoader
         name = curChild.child.text[12..-1]
         curLeague = Bvt::League.new(name)
         res.push(curLeague)
-        puts "[INFO] Adding games for #{name}"
       end
     end
 

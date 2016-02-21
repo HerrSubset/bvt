@@ -29,7 +29,6 @@ class Bvt::AvfLoader
 
   #download the AVF games in JSON format and parse them into an array
   def self.get_games_section(start_date, end_date)
-    puts "[INFO] downloading from #{start_date.to_s} onwards"
     format = "%Y-%m-%d"
     s = start_date.strftime(format)
     e = end_date.strftime(format)
@@ -93,7 +92,6 @@ class Bvt::AvfLoader
 
     end while tmp_games.length == 500
 
-    puts "[INFO] There are #{games.length} games in the AVF federation"
     return games
   end
 
