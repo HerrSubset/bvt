@@ -55,4 +55,10 @@ class Bvt::League
 
     return res
   end
+
+
+  #override equality operator
+  def ==(league)
+    return @name == league.name
+  end
 end

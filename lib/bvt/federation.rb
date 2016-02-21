@@ -2,6 +2,10 @@ class Bvt::Federation
 
   #constructor
   def initialize(name, leagues = Array.new)
+
+    #make sure leagues is not nil
+    leagues = Array.new if leagues.class != Array
+
     @name = name
     @leagues = leagues
   end
