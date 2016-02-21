@@ -79,12 +79,8 @@ class Bvt::AvfLoader
     begin
       tmp_games = get_games_section(season_start, season_end)
 
-      #add games if they're not in there yet
-      tmp_games.each do |g|
-        if !games.include?(g)
-          games.push(g)
-        end
-      end
+      #add games to the games array
+      games = games.concat(tmp_games)
 
       #get latest date of the last downloaded part and use that as input for
       #the next download
