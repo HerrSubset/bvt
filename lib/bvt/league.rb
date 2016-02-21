@@ -13,7 +13,7 @@ class Bvt::League
 
   #add a game to the list of games
   def add_game(game)
-    if game.class == Bvt::Game
+    if game.class == Bvt::Game && !@games.include?(game)
       @games.push(game)
     end
   end
@@ -59,6 +59,12 @@ class Bvt::League
 
   #override equality operator
   def ==(league)
-    return @name == league.name
+    res = false
+    
+    if league != nil
+      res = @name == league.name
+    end
+
+    return res
   end
 end
