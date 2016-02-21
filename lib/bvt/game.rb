@@ -36,6 +36,6 @@ class Bvt::Game
 
   #overwrite the equality operator for the game class
   def ==(game)
-    return @id == game.id
+    return (game.class == Bvt::Game) && (@id == game.id)
   end
 end
