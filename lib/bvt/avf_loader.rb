@@ -29,14 +29,28 @@ class Bvt::AvfLoader
 
   #download the AVF games in JSON format and parse them into an array
   def self.get_games_section(start_date, end_date)
+    #container variable for the return value
+    res = Array.new
+
     format = "%Y-%m-%d"
     s = start_date.strftime(format)
     e = end_date.strftime(format)
+
     json_file = Net::HTTP.get('volley-avf.be',
                 "/bolt/kalenders?co=0&cl=0&v=#{s}&t=#{e}&f=json")
 
-    games = JSON.parse(json_file)
-    return games["items"]
+    #check if the games actually got downloaded
+    if json_file.include?("404 Not Found")
+      puts "[ERROR] could not complete download"
+
+    #process the downloads
+    else
+      games = JSON.parse(json_file)
+      res = games["items"]
+    end
+
+
+    return res
   end
 
 
@@ -84,7 +98,9 @@ class Bvt::AvfLoader
 
       #get latest date of the last downloaded part and use that as input for
       #the next download
-      season_start = Date.parse(tmp_games[-1]["date"]) - 1
+      if tmp_games.length > 0
+        season_start = Date.parse(tmp_games[-1]["date"]) - 1
+      end
 
     end while tmp_games.length == 500
 
