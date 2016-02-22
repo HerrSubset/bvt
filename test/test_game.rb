@@ -38,6 +38,21 @@ class GameTest < Minitest::Test
   end
 
 
+  def test_has_been_played
+    g1 = Bvt::Game.new(1, "home", "away", Date.new(2003, 1,1))
+    assert(!g1.has_been_played?)
+
+    g2 = Bvt::Game.new(1, "home", "away", Date.new(2003, 1,1), 3,0)
+    assert(g2.has_been_played?)
+
+    g3 = Bvt::Game.new(1, "home", "away", Date.new(2003, 1,1), 0, 3)
+    assert(g3.has_been_played?)
+
+    g4 = Bvt::Game.new(1, "home", "away", Date.new(2003, 1,1), 2, 3)
+    assert(g4.has_been_played?)
+  end
+
+
   def test_equality_operator
     g1 = Bvt::Game.new(1, "home", "away", Date.new(2003, 1,1))
     g2 = nil

@@ -24,6 +24,28 @@ l = leagues[input - 1]
 puts "You selected #{l.name}\n"
 
 
+#print league rankings
+ranking = l.get_rankings
+
+#make all team name strings equal in length by adding spaces
+longest = 0
+ranking.each do |r|
+  if r["name"].length > longest
+    longest = r["name"].length
+  end
+end
+
+ranking.each do |r|
+  difference = longest - r["name"].length
+  r["name"] += " " * difference
+end
+
+
+ranking.each do |r|
+  puts "#{r['name']}\t#{r['played']}\t#{r['3_points']}\t#{r['2_points']}\t#{r['1_point']}\t#{r['0_points']}\t#{r['won_sets']}\t#{r['lost_sets']}\t#{r['points']}"
+end
+
+
 puts "\nAvailable teams in #{l.name}:"
 team_list = l.get_teams.sort
 (1..(team_list.length)).each do |n|

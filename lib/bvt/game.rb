@@ -34,6 +34,13 @@ class Bvt::Game
   end
 
 
+  #checks if a game has been played. This can be verified by checking if one of
+  #the set scores is different from 0
+  def has_been_played?
+    return (@home_sets != 0) || (@away_sets != 0)
+  end
+
+
   #overwrite the equality operator for the game class
   def ==(game)
     return (game.class == Bvt::Game) && (@id == game.id)

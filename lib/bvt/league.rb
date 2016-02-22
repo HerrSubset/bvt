@@ -57,9 +57,80 @@ class Bvt::League
   end
 
 
+  #create an array where each line holds a hash that represents a line in the
+  #rankings table for this league
+  def get_rankings
+    #create tmp hash storage for all the rows in the rankings table
+    row_holder = Hash.new { |hash, key| hash[key] =
+            {"played" => 0, "3_points" => 0, "2_points" => 0, "1_point" => 0,
+            "0_points" => 0, "won_sets" => 0, "lost_sets" => 0, "points" => 0,
+            "name" => key}}
+
+    @games.each do |g|
+        if g.has_been_played?
+          #add played game for both teams
+          row_holder[g.home_team]["played"] += 1
+          row_holder[g.away_team]["played"] += 1
+
+          #add won sets for each team
+          row_holder[g.home_team]["won_sets"] += g.home_sets
+          row_holder[g.away_team]["won_sets"] += g.away_sets
+
+          #add lost sets for each team
+          row_holder[g.home_team]["lost_sets"] += g.away_sets
+          row_holder[g.away_team]["lost_sets"] += g.home_sets
+
+          #handle all different game outcomes, prepare for ugly code
+          #handle 3-0 and 3-1
+          if (g.home_sets == 3) && (g.away_sets < 2)
+            row_holder[g.home_team]["points"] += 3
+            row_holder[g.home_team]["3_points"] += 1
+            row_holder[g.away_team]["0_points"] += 1
+
+          #handle 3-2
+          elsif (g.home_sets == 3) && (g.away_sets == 2)
+            row_holder[g.home_team]["points"] += 2
+            row_holder[g.away_team]["points"] += 1
+            row_holder[g.home_team]["2_points"] += 1
+            row_holder[g.away_team]["1_point"] += 1
+
+          #handle 2-3
+          elsif (g.home_sets == 2) && (g.away_sets ==3)
+            row_holder[g.away_team]["points"] += 2
+            row_holder[g.home_team]["points"] += 1
+            row_holder[g.home_team]["1_point"] += 1
+            row_holder[g.away_team]["2_points"] += 1
+
+          #handle 0-3 and 1-3
+          elsif (g.home_sets < 2) && (g.away_sets == 3)
+            row_holder[g.away_team]["points"] += 3
+            row_holder[g.home_team]["0_points"] += 1
+            row_holder[g.away_team]["3_points"] += 1
+          end
+        end
+    end
+
+
+
+    #convert the row_holder hash to a sorted array
+    sort_ranking(row_holder)
+  end
+
+
+
+  def sort_ranking(ranking_hash)
+    res = ranking_hash.values
+
+    res.sort! { |x,y| y["points"] - x["points"]}
+
+    return res
+  end
+
+
   #override equality operator
   def ==(league)
     res = false
+
     if league != nil
       res = @name == league.name
     end
