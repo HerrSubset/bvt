@@ -12,19 +12,20 @@ end
 
 #print all league names to the screen
 puts "\nAvailable leagues:"
-(1..(fed.leagues.length)).each do |n|
-  puts "#{n}:\t#{fed.leagues[n-1].name}"
+leagues = fed.leagues.sort
+(1..(leagues.length)).each do |n|
+  puts "#{n}:\t#{leagues[n-1].name}"
 end
 
 #let user select league
 puts "Enter the number of the league you'd like to select:"
 input = $stdin.gets.chomp.to_i
-l = fed.leagues[input - 1]
+l = leagues[input - 1]
 puts "You selected #{l.name}\n"
 
 
 puts "\nAvailable teams in #{l.name}:"
-team_list = l.get_teams
+team_list = l.get_teams.sort
 (1..(team_list.length)).each do |n|
   puts "#{n}:\t#{team_list[n-1]}"
 end

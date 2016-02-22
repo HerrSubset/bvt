@@ -60,11 +60,17 @@ class Bvt::League
   #override equality operator
   def ==(league)
     res = false
-    
     if league != nil
       res = @name == league.name
     end
 
     return res
+  end
+
+
+  #override combined comparison operator. Use the names of the leagues that
+  #are being compared
+  def <=>(league)
+    return @name <=> league.name
   end
 end
