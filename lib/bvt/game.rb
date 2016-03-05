@@ -4,8 +4,8 @@ class Bvt::Game
     @id = id
     @home_team = home_team
     @away_team = away_team
-    @home_sets = home_sets
-    @away_sets = away_sets
+    @home_sets = home_sets.to_i
+    @away_sets = away_sets.to_i
     @location = location
     @date = date
   end
