@@ -8,8 +8,12 @@ class Bvt::AvfLoader
   def self.create_game(game_hash)
     home_t = game_hash["team1"]
     away_t = game_hash["team2"]
-    d = Date.parse(game_hash["date"])
     id = game_hash["id"]
+
+    date = Date.parse(game_hash["date"])
+    hour = game_hash["time"][0..1].to_i
+    minutes = game_hash["time"][3..4].to_i
+    d = DateTime.new(date.year, date.month, date.day, hour, minutes)
 
 
     #add scores if they're available
