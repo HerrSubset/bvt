@@ -5,22 +5,29 @@ require "date"
 
 class Bvt::VvbLoader
   #extracts the number of won sets by the home and away team for a score string
-  def self.extractSets(scoreString)
-  	home_sets = scoreString[9].to_i
-  	away_sets = scoreString[13].to_i
+  def self.extractSets(results_node)
+    home_sets = 0
+    away_sets = 0
+
+    #TODO
 
   	return home_sets, away_sets
   end
 
 
   #creates a Game object from the given nokogiri node
-  def self.createGame(gameNode)
+  def self.createGame(gameNode, resultsNode = nil)
   	#retrieve game information from this node
   	child = gameNode.child
   	code = child.text.downcase
 
   	child = child.next
+    child = child.next
   	date = Date.parse(child.text)
+
+    child = child.next
+    time = child.text
+    dt = DateTime.new(date.year, date.month, date.day, time[0..1].to_i, time[3..4].to_i)
 
   	child = child.next
   	home = child.text.downcase
@@ -29,10 +36,12 @@ class Bvt::VvbLoader
   	away = child.text.downcase
 
   	child = child.next
-  	home_sets, away_sets = extractSets(child.text)
+  	location = child.text
+
+    home_sets, away_sets = extractSets(resultsNode)
 
   	#create new game with the retrieved information
-  	return Bvt::Game.new(code, home, away, date, home_sets, away_sets)
+  	return Bvt::Game.new(code, home, away, dt, home_sets, away_sets)
   end
 
 
@@ -40,7 +49,7 @@ class Bvt::VvbLoader
   #download the html page containing the games and extract the part
   #containing the relevant information. Return that part as a nokogiri node
   def self.getGameHtml()
-  	uri = URI("http://www.volleyvvb.be/competitie-uitslagen/")
+  	uri = URI("http://www.volleyvvb.be/competitie-wedstrijden/")
 
   	#write html to file
   	post_options = {"Reeks" => "%", "Stamnummer" => "%", "Week" => "0"}
@@ -52,7 +61,7 @@ class Bvt::VvbLoader
 
 
   	#find the html table containing all the games
-  	table = doc.css("div#content div.entry table[align=center]")
+  	table = doc.css("div#content div.entry table[cellpadding='1']")
   	return table[0]
   end
 
@@ -66,6 +75,7 @@ class Bvt::VvbLoader
 
     #create the first league
     curChild = table.child
+    curChild = curChild.next  #first child is empty
     curLeague = Bvt::League.new(curChild.text[12..-1])
 
     #create an array to store the current league's games
@@ -80,8 +90,9 @@ class Bvt::VvbLoader
       curClass = curChild.child["class"]
 
 
-      if (curClass == "vvb_tekst_middelkl")
-        #rows with this class contain game information.
+      if (curClass == "wedstrijd")
+        #rows with this class contain game information. The next row contains
+        #the game result (if available)
         g = createGame(curChild)
 
         #add the game to the league's array
