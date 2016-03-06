@@ -71,8 +71,8 @@ class Bvt::Federation
 
 
 
-  #get the league with the given name. Load it if it's not in the league_list
-  #array.
+  #get the league with the given name. Try to load it dynamically if it's not
+  #in the league_list array.
   def get_league(name)
     res = nil
 

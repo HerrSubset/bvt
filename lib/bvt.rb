@@ -7,7 +7,7 @@ class Bvt
       f = Federation.new("VVB", VvbLoader)
 
     elsif federation_name.downcase == "avf"
-      f = Federation.new("AVF", AvfLoader)
+      f = Federation.new("AVF", AvfLoader, false)
     end
 
     return f

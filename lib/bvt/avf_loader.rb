@@ -34,7 +34,7 @@ class Bvt::AvfLoader
 
 
   #download the AVF games in JSON format and parse them into an array
-  def self.get_games_section(start_date, end_date)
+  def self.get_games_section(start_date, end_date, league_parameter = 0)
     #container variable for the return value
     res = Array.new
 
@@ -43,7 +43,7 @@ class Bvt::AvfLoader
     e = end_date.strftime(format)
 
     json_file = Net::HTTP.get('volley-avf.be',
-                "/bolt/kalenders?co=0&cl=0&v=#{s}&t=#{e}&f=json")
+                "/bolt/kalenders?co=#{league_parameter}&cl=0&v=#{s}&t=#{e}&f=json")
 
     #check if the games actually got downloaded
     if json_file.include?("404 Not Found")
@@ -161,10 +161,33 @@ class Bvt::AvfLoader
 
 
   #download one league based on its names
-  def load_league(name)
+  def self.load_league(name)
     res = nil
 
+    doc = Nokogiri::HTML(open('http://volley-avf.be/bolt/kalenders'))
+    leagues_holder = doc.css("select#comp_comp")[0]
+    leagues = leagues_holder.css("option")
 
+    league_value = nil
+
+    #look for the post value belonging to the given name
+    leagues.each do |l|
+      league_value = l["value"] if name == l.text
+    end
+
+    #create a league if a post value was Found
+    if league_value
+      s, e = get_season_dates
+      games = get_games_section(s, e, league_value)
+
+      #create the league if games were Found
+      if games && games.length > 0
+        res = Bvt::League.new(name)
+        games.each do |g|
+          res.add_game(create_game(g))
+        end
+      end
+    end
 
     return res
   end
