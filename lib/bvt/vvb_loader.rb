@@ -9,7 +9,10 @@ class Bvt::VvbLoader
     home_sets = 0
     away_sets = 0
 
-    #TODO
+    if results_node != nil
+      home_sets = results_node.text[9].to_i
+      away_sets = results_node.text[13].to_i
+    end
 
   	return home_sets, away_sets
   end
@@ -93,10 +96,20 @@ class Bvt::VvbLoader
       if (curClass == "wedstrijd")
         #rows with this class contain game information. The next row contains
         #the game result (if available)
-        g = createGame(curChild)
+        results_node = nil
+
+        #check if the next node contains game results
+        if curChild.next.child["class"] == "uitslag"
+          results_node = curChild.next
+        end
+
+        g = createGame(curChild, results_node)
 
         #add the game to the league's array
         curLeague.add_game(g)
+
+        #we don't have to process the next row if we know it's a results node
+        curChild = results_node if results_node != nil
 
 
       elsif (curClass == "vvb_titel2")
