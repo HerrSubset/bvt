@@ -3,7 +3,7 @@ require "bvt"
 
 class FederationTest < Minitest::Test
   def test_constructor
-    f1 = Bvt::Federation.new("f1", Array.new)
+    f1 = Bvt::Federation.new("f1")
     assert_equal(f1.name, "f1")
     assert_equal(f1.leagues.class, Array)
     assert_equal(f1.leagues.length, 0)
@@ -12,7 +12,7 @@ class FederationTest < Minitest::Test
     assert_equal(f2.leagues.class, Array)
     assert_equal(f2.leagues.length, 0)
 
-    f3 = Bvt::Federation.new("f3", Array.new)
+    f3 = Bvt::Federation.new("f3")
     assert_equal(f3.leagues.class, Array)
     assert_equal(f3.leagues.length, 0)
   end

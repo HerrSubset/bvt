@@ -2,15 +2,12 @@ class Bvt
   def self.load_federation(federation_name)
     #make sure this function returns at least nil
     f = nil
-    puts "[INFO] loading #{federation_name}"
 
     if federation_name.downcase == "vvb"
-      leagues = VvbLoader.load
-      f = Federation.new("VVB", leagues)
+      f = Federation.new("VVB", VvbLoader)
 
     elsif federation_name.downcase == "avf"
-      leagues = AvfLoader.load
-      f = Federation.new("AVF", leagues)
+      f = Federation.new("AVF", AvfLoader)
     end
 
     return f

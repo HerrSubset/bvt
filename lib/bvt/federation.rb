@@ -1,13 +1,12 @@
 class Bvt::Federation
 
   #constructor
-  def initialize(name, leagues = Array.new)
-
-    #make sure leagues is not nil
-    leagues = Array.new if leagues.class != Array
-
+  def initialize(name, loader = nil)
     @name = name
-    @leagues = leagues
+    @leagues = loader.load if loader != nil
+
+    #make sure leagues is an array if loader was nil
+    @leagues = Array.new if loader == nil
   end
 
 
