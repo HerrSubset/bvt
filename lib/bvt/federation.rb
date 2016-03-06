@@ -1,18 +1,29 @@
 class Bvt::Federation
 
   #constructor
-  def initialize(name, loader = nil)
+  def initialize(name, loader = nil, full_load = true)
     @name = name
-    @leagues = loader.load if loader != nil
+    @loader = loader
+    @leagues = Array.new
 
-    #make sure leagues is an array if loader was nil
-    @leagues = Array.new if loader == nil
+    if full_load
+      load_all
+    end
   end
+
 
 
   #getters
   attr_reader :name
   attr_reader :leagues
+
+
+
+  #loads all leagues and its games belonging to a federation into memory
+  def load_all
+    @leagues = @loader.load if @loader != nil
+  end
+
 
 
   #add league to this federation
@@ -21,6 +32,7 @@ class Bvt::Federation
       @leagues.push(league)
     end
   end
+
 
 
   #get an array with all the names of all the leagues
@@ -33,6 +45,7 @@ class Bvt::Federation
 
     return res
   end
+
 
 
   #get the league with the given name
