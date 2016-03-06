@@ -1,6 +1,8 @@
 require "net/http"
 require "json"
 require "date"
+require "nokogiri"
+require "open-uri"
 
 class Bvt::AvfLoader
 
@@ -135,5 +137,24 @@ class Bvt::AvfLoader
     end
 
     return league_hash.values
+  end
+
+
+
+  #download the league names and return them in an array
+  def self.get_league_names
+    res = Array.new
+
+    doc = Nokogiri::HTML(open('http://volley-avf.be/bolt/kalenders'))
+    leagues_holder = doc.css("select#comp_comp")[0]
+    leagues = leagues_holder.css("option").to_a
+    leagues.delete_at(0)  #first item is empty
+
+    leagues.each do |l|
+      res.push(l.text)
+    end
+
+
+    return res
   end
 end

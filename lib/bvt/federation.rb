@@ -5,9 +5,13 @@ class Bvt::Federation
     @name = name
     @loader = loader
     @leagues = Array.new
+    @league_names = nil
 
     if full_load
       load_all
+
+    else
+      partial_load
     end
   end
 
@@ -26,6 +30,17 @@ class Bvt::Federation
 
 
 
+  #load the league names belonging to this federation. The leagues themselves
+  #can be loaded later
+  def partial_load
+    if @loader
+      names = @loader.get_league_names
+      @league_names = names if names.length > 0
+    end
+  end
+
+
+
   #add league to this federation
   def add_league(league)
     if league.class == Bvt::League && ! @leagues.include?(league)
@@ -39,8 +54,16 @@ class Bvt::Federation
   def get_league_names
     res = Array.new
 
-    @leagues.each do |l|
-      res.push(l.name)
+
+    if @league_names
+      #league names were downloaded before
+      res = @league_names
+
+    else
+      #league names were not downloaded, extract them from the league objects
+      @leagues.each do |l|
+        res.push(l.name)
+      end
     end
 
     return res
