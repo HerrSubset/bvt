@@ -10,6 +10,5 @@ Gem::Specification.new do |s|
   s.description = "Tools to interact with the various belgian volleyball federations' data"
   s.authors     = ["HerrSubset"]
   s.files       = Dir.glob("{bin,lib}/**/*")
-  s.executables = ["bvt"]
   s.license     = 'MIT'
 end
