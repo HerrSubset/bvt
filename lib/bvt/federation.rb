@@ -71,12 +71,23 @@ class Bvt::Federation
 
 
 
-  #get the league with the given name
+  #get the league with the given name. Load it if it's not in the league_list
+  #array.
   def get_league(name)
     res = nil
 
     @leagues.each do |l|
       res = l if l.name == name
+    end
+
+    #load league if it didn't exist yet, but it's in the league_names array
+    if !res && @league_names && @league_names.include?(name)
+      league = @loader.load_league(name)
+
+      if league
+        res = league
+        @leagues.push(league)
+      end
     end
 
     return res

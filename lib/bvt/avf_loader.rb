@@ -150,9 +150,20 @@ class Bvt::AvfLoader
     leagues = leagues_holder.css("option").to_a
     leagues.delete_at(0)  #first item is empty
 
+    #push all league names into the res array
     leagues.each do |l|
       res.push(l.text)
     end
+
+    return res
+  end
+
+
+
+  #download one league based on its names
+  def load_league(name)
+    res = nil
+
 
 
     return res
