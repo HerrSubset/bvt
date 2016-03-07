@@ -65,17 +65,17 @@ class Bvt::KovvLoader
 
   #load a league based on a parameter that has to be given to an online form
   #or API
-  def self.load_league(post_param)
+  def self.load_league(league_stub)
     res = nil
 
-    if post_param
-      tmp_file = open("http://volleybieb.be/AjaxVVBWedstijden.php?wattedoen=1&provincie=6&reeks=#{post_param}&competitie=1&team=0&datumbegin=0&datumeind=0&stamnummer=0")
+    if league_stub
+      tmp_file = open("http://volleybieb.be/AjaxVVBWedstijden.php?wattedoen=1&provincie=6&reeks=#{league_stub.post_parameter}&competitie=1&team=0&datumbegin=0&datumeind=0&stamnummer=0")
       json_file = tmp_file.read
       games = JSON.parse(json_file)
 
       #create the league if games were Found
       if games && games.length > 0
-        res = Bvt::League.new(name)
+        res = Bvt::League.new(league_stub.name)
         games.each do |g|
           res.add_game(create_game(g))
         end

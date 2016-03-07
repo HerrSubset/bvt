@@ -85,11 +85,10 @@ class Bvt::Federation
 
     #load league if it didn't exist yet, but it's in the league_names array
     if !res && @league_names
-      post_val = nil
+      stub = nil
+      @league_names.each {|l| stub = l if l.name == name}
 
-      @league_names.each {|l| post_val = l.post_parameter if l.name == name}
-
-      league = @loader.load_league(post_val)
+      league = @loader.load_league(stub)
 
       if league
         res = league

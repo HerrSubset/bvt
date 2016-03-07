@@ -48,7 +48,6 @@ class FederationTest < Minitest::Test
     league = fed.get_league(name)
 
     assert(league.name == name, "name of downloaded league should be equal to the league requested")
-    puts("#{name} == #{league.name}?")
     assert(fed.leagues.include?(league), "make sure league is added to the federation")
   end
 end

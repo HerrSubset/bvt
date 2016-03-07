@@ -162,17 +162,17 @@ class Bvt::AvfLoader
 
 
   #download one league based on its names
-  def self.load_league(post_param)
+  def self.load_league(league_stub)
     res = nil
 
     #create a league if post_param is not nil
-    if post_param
+    if league_stub
       s, e = get_season_dates
-      games = get_games_section(s, e, post_param)
+      games = get_games_section(s, e, league_stub.post_parameter)
 
       #create the league if games were Found
       if games && games.length > 0
-        res = Bvt::League.new(name)
+        res = Bvt::League.new(league_stub.name)
         games.each do |g|
           res.add_game(create_game(g))
         end
