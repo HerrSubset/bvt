@@ -35,4 +35,20 @@ class FederationTest < Minitest::Test
     fed.add_league(l3)
     assert_equal(fed.leagues.length, 2)
   end
+
+
+  #when a league is loaded dynamically, it should be stored in memory
+  def test_dynamic_loading_stores_league
+    fed = Bvt::Federation.new("KOVV", Bvt::KovvLoader, false)
+    names = fed.get_league_names
+
+    assert(names.length > 0, "names should be downloaded on partial load")
+
+    name = names[0]
+    league = fed.get_league(name)
+
+    assert(league.name == name, "name of downloaded league should be equal to the league requested")
+    puts("#{name} == #{league.name}?")
+    assert(fed.leagues.include?(league), "make sure league is added to the federation")
+  end
 end
