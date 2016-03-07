@@ -152,7 +152,8 @@ class Bvt::AvfLoader
 
     #push all league names into the res array
     leagues.each do |l|
-      res.push(l.text)
+      tmp = Bvt::LeagueStub.new(l.text, l["value"].to_i)
+      res.push(tmp)
     end
 
     return res
@@ -161,24 +162,13 @@ class Bvt::AvfLoader
 
 
   #download one league based on its names
-  def self.load_league(name)
+  def self.load_league(post_param)
     res = nil
 
-    doc = Nokogiri::HTML(open('http://volley-avf.be/bolt/kalenders'))
-    leagues_holder = doc.css("select#comp_comp")[0]
-    leagues = leagues_holder.css("option")
-
-    league_value = nil
-
-    #look for the post value belonging to the given name
-    leagues.each do |l|
-      league_value = l["value"] if name == l.text
-    end
-
-    #create a league if a post value was Found
-    if league_value
+    #create a league if post_param is not nil
+    if post_param
       s, e = get_season_dates
-      games = get_games_section(s, e, league_value)
+      games = get_games_section(s, e, post_param)
 
       #create the league if games were Found
       if games && games.length > 0

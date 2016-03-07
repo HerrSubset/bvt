@@ -57,7 +57,9 @@ class Bvt::Federation
 
     if @league_names
       #league names were downloaded before
-      res = @league_names
+      @league_names.each do |l|
+        res.push(l.name)
+      end
 
     else
       #league names were not downloaded, extract them from the league objects
@@ -80,9 +82,14 @@ class Bvt::Federation
       res = l if l.name == name
     end
 
+
     #load league if it didn't exist yet, but it's in the league_names array
-    if !res && @league_names && @league_names.include?(name)
-      league = @loader.load_league(name)
+    if !res && @league_names
+      post_val = nil
+
+      @league_names.each {|l| post_val = l.post_parameter if l.name == name}
+
+      league = @loader.load_league(post_val)
 
       if league
         res = league
