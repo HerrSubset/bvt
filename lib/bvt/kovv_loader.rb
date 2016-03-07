@@ -34,7 +34,15 @@ class Bvt::KovvLoader
 
   #returns a hash containing all the leagues of this federation
   def self.load
+    res = Array.new
+    league_stubs = get_league_names
 
+    league_stubs.each do |s|
+      league = load_league(s)
+      res.push(league)
+    end
+
+    return res
   end
 
 
