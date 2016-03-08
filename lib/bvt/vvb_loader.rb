@@ -1,125 +1,63 @@
 require "net/http"
-require "nokogiri"
-require "date"
+require "json"
+require "open-uri"
 
 
-class Bvt::VvbLoader
-  #extracts the number of won sets by the home and away team for a score string
-  def self.extractSets(results_node)
-    home_sets = 0
-    away_sets = 0
+class Bvt::VvbLoader < Loader
 
-    if results_node != nil
-      home_sets = results_node.text[9].to_i
-      away_sets = results_node.text[13].to_i
+  #creates a new game given a game hash
+  def self.create_game(game_hash)
+    home_t = game_hash["thuisploeg"]
+    away_t = game_hash["bezoekers"]
+    id = game_hash["WNR"]
+
+    date = Date.parse(game_hash["Datum"])
+    hour = game_hash["aanvangsuur"][0..1].to_i
+    minutes = game_hash["aanvangsuur"][3..4].to_i
+    d = DateTime.new(date.year, date.month, date.day, hour, minutes)
+
+    #check if results are available
+    if game_hash["resulthoofd"] != ""
+      home_s = game_hash["resulthoofd"][0]
+      away_s = game_hash["resulthoofd"][4]
+
+      return Bvt::Game.new(id, home_t, away_t, d, home_s, away_s)
+
+    #return game without scores
+    else
+      return Bvt::Game.new(id, home_t, away_t, d)
     end
-
-  	return home_sets, away_sets
-  end
-
-
-  #creates a Game object from the given nokogiri node
-  def self.createGame(gameNode, resultsNode = nil)
-  	#retrieve game information from this node
-  	child = gameNode.child
-  	code = child.text.downcase
-
-  	child = child.next
-    child = child.next
-  	date = Date.parse(child.text)
-
-    child = child.next
-    time = child.text
-    dt = DateTime.new(date.year, date.month, date.day, time[0..1].to_i, time[3..4].to_i)
-
-  	child = child.next
-  	home = child.text.downcase
-
-  	child = child.next
-  	away = child.text.downcase
-
-  	child = child.next
-  	location = child.text
-
-    home_sets, away_sets = extractSets(resultsNode)
-
-  	#create new game with the retrieved information
-  	return Bvt::Game.new(code, home, away, dt, home_sets, away_sets)
   end
 
 
 
-  #download the html page containing the games and extract the part
-  #containing the relevant information. Return that part as a nokogiri node
-  def self.getGameHtml()
-  	uri = URI("http://www.volleyvvb.be/competitie-wedstrijden/")
-
-  	#write html to file
-  	post_options = {"Reeks" => "%", "Stamnummer" => "%", "Week" => "0"}
-  	response = Net::HTTP.post_form(uri, post_options)
-
-
-  	#let nokogiri parse the received html
-  	doc = Nokogiri::HTML(response.body)
-
-
-  	#find the html table containing all the games
-  	table = doc.css("div#content div.entry table[cellpadding='1']")
-  	return table[0]
+  #creates a league stub from one of the data items downloaded with the
+  #get_leagues_stub_data_list function
+  def self.get_league_stub(stub_data)
+    return Bvt::LeagueStub.new(stub_data["reeksnaam"],
+                              stub_data["reeksafkorting"])
   end
 
 
 
-  def self.load()
-    table = getGameHtml
+  #downloads the data items that contain both the name and the download
+  #parameter for all the leagues in this federation
+  def self.get_leagues_stub_data_list
+    uri = URI("http://volleybieb.be/AjaxVVBWedstijden.php")
 
-    #create a hash to store all the leagues and their games
-    res = Array.new
+    #get a JSON file containing all league names and their abbreviations
+    post_options = {"wattedoen" => "2", "reekstype" => "1", "provincie" => "0"}
+    json_file = Net::HTTP.post_form(uri, post_options).body
 
-    #create the first league
-    curChild = table.child
-    curChild = curChild.next  #first child is empty
-    curLeague = Bvt::League.new(curChild.text[12..-1])
-
-    #create an array to store the current league's games
-    res.push(curLeague)
+    return JSON.parse(json_file)
+  end
 
 
-    #loop through all table rows and extract useful information
-    while !curChild.next.nil? do
 
-      #go to the next item in the table
-      curChild = 	curChild.next
-      curClass = curChild.child["class"]
-
-
-      if (curClass == "wedstrijd")
-        #rows with this class contain game information. The next row contains
-        #the game result (if available)
-        results_node = nil
-
-        #check if the next node contains game results
-        if curChild.next.child["class"] == "uitslag"
-          results_node = curChild.next
-        end
-
-        g = createGame(curChild, results_node)
-
-        #add the game to the league's array
-        curLeague.add_game(g)
-
-        #we don't have to process the next row if we know it's a results node
-        curChild = results_node if results_node != nil
-
-
-      elsif (curClass == "vvb_titel2")
-        #rows with this class start a new league
-        name = curChild.child.text[12..-1]
-        curLeague = Bvt::League.new(name)
-        res.push(curLeague)
-      end
-    end
-
-    return res
+  #downloads game information of a given league
+  def self.get_league_games(league_stub)
+    tmp_file = open("http://volleybieb.be/AjaxVVBWedstijden.php?wattedoen=1&provincie=0&reeks=#{league_stub.post_parameter}&competitie=1&team=0&datumbegin=0&datumeind=0&stamnummer=0")
+    json_file = tmp_file.read
+    return JSON.parse(json_file)
   end
 end
