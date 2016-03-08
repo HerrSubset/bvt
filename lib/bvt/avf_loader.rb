@@ -4,7 +4,7 @@ require "date"
 require "nokogiri"
 require "open-uri"
 
-class Bvt::AvfLoader
+class Bvt::AvfLoader < Loader
 
   #takes a game hash as input and transforms it into a Bvt::Game object
   def self.create_game(game_hash)
@@ -35,18 +35,19 @@ class Bvt::AvfLoader
 
   #downloads the data items that contain both the name and the download
   #parameter for all the leagues in this federation
-  def self.get_league_stub_data_list
+  def self.get_leagues_stub_data_list
     doc = Nokogiri::HTML(open('http://volley-avf.be/bolt/kalenders'))
     leagues_holder = doc.css("select#comp_comp")[0]
     leagues = leagues_holder.css("option").to_a
-    return leagues.delete_at(0)  #first item is empty
+    leagues.delete_at(0)  #first item is empty
+    return leagues
   end
 
 
 
   #creates a league stub from one of the data items downloaded with the
   #get_leagues_stub_data_list function
-  def get_league_stub(league)
+  def self.get_league_stub(league)
     return Bvt::LeagueStub.new(league.text, league["value"].to_i)
   end
 
@@ -57,7 +58,7 @@ class Bvt::AvfLoader
     res = Array.new
 
     #date parameters
-    s, e = get_season_dates
+    start_date, end_date = get_season_dates
     format = "%Y-%m-%d"
     s = start_date.strftime(format)
     e = end_date.strftime(format)
