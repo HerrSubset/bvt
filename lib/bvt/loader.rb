@@ -4,6 +4,8 @@
 # -get_league_games(game_stub)
 # -get_league_stub_data_list
 # -get_league_stub(league)
+
+#abstract class
 class Loader
 
   #load a league based on a parameter that has to be given to an online form
@@ -57,5 +59,29 @@ class Loader
     end
 
     return res
+  end
+
+
+
+  #Utility function that some subclasses might need to determine the boundary
+  #dates of the current season. It returns the dates of the if a season is
+  #goin on at the moment. Otherwise it returns the dates for the next season.
+  def self.get_season_dates
+    today = Date.today
+    end_date = nil
+    start_date = nil
+
+    if today.month > 5
+      #download season that's running this and following year
+      start_date = Date.new(today.year, 8, 31)
+      end_date = Date.new(today.year + 1, 5, 31)
+
+    else
+      #download season running this and the previous year
+      start_date = Date.new(today.year - 1, 8, 31)
+      end_date = Date.new(today.year, 5, 31)
+    end
+
+    return start_date, end_date
   end
 end

@@ -61,29 +61,6 @@ class Bvt::AvfLoader
 
 
 
-  #returns the start and end date of a season. The dates are those of the
-  #current season, and otherwise the next one.
-  def self.get_season_dates
-    today = Date.today
-    end_date = nil
-    start_date = nil
-
-    if today.month > 5
-      #download season that's running this and following year
-      start_date = Date.new(today.year, 8, 31)
-      end_date = Date.new(today.year + 1, 5, 31)
-
-    else
-      #download season running this and the previous year
-      start_date = Date.new(today.year - 1, 8, 31)
-      end_date = Date.new(today.year, 5, 31)
-    end
-
-    return start_date, end_date
-  end
-
-
-
   def self.get_league_stub_data_list
     doc = Nokogiri::HTML(open('http://volley-avf.be/bolt/kalenders'))
     leagues_holder = doc.css("select#comp_comp")[0]
