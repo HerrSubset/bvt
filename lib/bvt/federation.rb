@@ -1,7 +1,7 @@
 class Bvt::Federation
 
   #constructor
-  def initialize(name, loader = nil, full_load = true)
+  def initialize(name, loader = nil, full_load = false)
     @name = name
     @loader = loader
     @leagues = Array.new

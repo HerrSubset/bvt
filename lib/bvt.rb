@@ -4,13 +4,13 @@ class Bvt
     f = nil
 
     if federation_name.downcase == "vvb"
-      f = Federation.new("VVB", VvbLoader, false)
+      f = Federation.new("VVB", VvbLoader)
 
     elsif federation_name.downcase == "avf"
-      f = Federation.new("AVF", AvfLoader, false)
+      f = Federation.new("AVF", AvfLoader)
 
     elsif federation_name.downcase == "kovv"
-      f = Federation.new("KOVV", KovvLoader, false)
+      f = Federation.new("KOVV", KovvLoader)
     end
 
     return f
