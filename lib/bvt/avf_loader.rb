@@ -33,14 +33,37 @@ class Bvt::AvfLoader
 
 
 
-  #download the AVF games in JSON format and parse them into an array
-  def self.get_games_section(start_date, end_date, league_parameter = 0)
-    #container variable for the return value
+  #downloads the data items that contain both the name and the download
+  #parameter for all the leagues in this federation
+  def self.get_league_stub_data_list
+    doc = Nokogiri::HTML(open('http://volley-avf.be/bolt/kalenders'))
+    leagues_holder = doc.css("select#comp_comp")[0]
+    leagues = leagues_holder.css("option").to_a
+    return leagues.delete_at(0)  #first item is empty
+  end
+
+
+
+  #creates a league stub from one of the data items downloaded with the
+  #get_leagues_stub_data_list function
+  def get_league_stub(league)
+    return Bvt::LeagueStub.new(league.text, league["value"].to_i)
+  end
+
+
+
+  #downloads game information of a given league
+  def self.get_league_games(league_stub)
     res = Array.new
 
+    #date parameters
+    s, e = get_season_dates
     format = "%Y-%m-%d"
     s = start_date.strftime(format)
     e = end_date.strftime(format)
+
+    #league parameter
+    league_parameter = league_stub.post_parameter
 
     json_file = Net::HTTP.get('volley-avf.be',
                 "/bolt/kalenders?co=#{league_parameter}&cl=0&v=#{s}&t=#{e}&f=json")
@@ -55,29 +78,6 @@ class Bvt::AvfLoader
       res = games["items"]
     end
 
-
     return res
-  end
-
-
-
-  def self.get_league_stub_data_list
-    doc = Nokogiri::HTML(open('http://volley-avf.be/bolt/kalenders'))
-    leagues_holder = doc.css("select#comp_comp")[0]
-    leagues = leagues_holder.css("option").to_a
-    return leagues.delete_at(0)  #first item is empty
-  end
-
-
-
-  def get_league_stub(league)
-    return Bvt::LeagueStub.new(league.text, league["value"].to_i)
-  end
-
-
-
-  def self.get_league_games(league_stub)
-    s, e = get_season_dates
-    games = get_games_section(s, e, league_stub.post_parameter)
   end
 end
