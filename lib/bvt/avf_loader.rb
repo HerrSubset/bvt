@@ -84,101 +84,23 @@ class Bvt::AvfLoader
 
 
 
-  #we can only load 500 AVF games at a time, so we have to build the games
-  #array piece by piece
-  def self.get_games
-    #container array for storing all games
-    games = Array.new
-
-    #get the season start and end date
-    season_start, season_end = get_season_dates
-
-    tmp_games = nil
-
-    #keep looping until all games were downloaded
-    begin
-      tmp_games = get_games_section(season_start, season_end)
-
-      #add games to the games array
-      games = games.concat(tmp_games)
-
-      #get latest date of the last downloaded part and use that as input for
-      #the next download
-      if tmp_games.length > 0
-        season_start = Date.parse(tmp_games[-1]["date"]) - 1
-      end
-
-    end while tmp_games.length == 500
-
-    return games
-  end
-
-
-
-  #returns an array with all the leagues in the AVF federation
-  def self.load
-    games = get_games
-
-    #create a hash to temporarily store all the leagues
-    league_hash = Hash.new
-
-    #add all games to their respective league
-    games.each do |g|
-      game = create_game(g)
-      game_league = g["competition"]
-
-      #check if this game's league exist, otherwise create it
-      if league_hash[game_league] == nil
-        league_hash[game_league] = Bvt::League.new(game_league)
-      end
-
-      #add this game to its league
-      league_hash[game_league].add_game(game)
-    end
-
-    return league_hash.values
-  end
-
-
-
-  #download the league names and return them in an array
-  def self.get_league_names
-    res = Array.new
-
+  def self.get_league_stub_data_list
     doc = Nokogiri::HTML(open('http://volley-avf.be/bolt/kalenders'))
     leagues_holder = doc.css("select#comp_comp")[0]
     leagues = leagues_holder.css("option").to_a
-    leagues.delete_at(0)  #first item is empty
-
-    #push all league names into the res array
-    leagues.each do |l|
-      tmp = Bvt::LeagueStub.new(l.text, l["value"].to_i)
-      res.push(tmp)
-    end
-
-    return res
+    return leagues.delete_at(0)  #first item is empty
   end
 
 
 
-  #download one league based on its names
-  def self.load_league(league_stub)
-    res = nil
+  def get_league_stub(league)
+    return Bvt::LeagueStub.new(league.text, league["value"].to_i)
+  end
 
-    #create a league if post_param is not nil
-    if league_stub
-      s, e = get_season_dates
-      games = get_games_section(s, e, league_stub.post_parameter)
 
-      #create the league if games were Found
-      if games && games.length > 0
-        res = Bvt::League.new(league_stub.name)
-        games.each do |g|
-          res.add_game(create_game(g))
-        end
-      end
-    end
 
-    return res
+  def self.get_league_games(league_stub)
+    s, e = get_season_dates
+    games = get_games_section(s, e, league_stub.post_parameter)
   end
 end
