@@ -4,7 +4,7 @@ require "open-uri"
 
 
 
-class Bvt::KovvLoader
+class Bvt::KovvLoader < Loader
 
   #creates a new game given a game hash
   def self.create_game(game_hash)
@@ -32,64 +32,33 @@ class Bvt::KovvLoader
 
 
 
-  #returns a hash containing all the leagues of this federation
-  def self.load
-    res = Array.new
-    league_stubs = get_league_names
-
-    league_stubs.each do |s|
-      league = load_league(s)
-      res.push(league)
-    end
-
-    return res
+  #creates a league stub from one of the data items downloaded with the
+  #get_leagues_stub_data_list function
+  def self.get_league_stub(stub_data)
+    return Bvt::LeagueStub.new(stub_data["reeksnaam"],
+                              stub_data["reeksafkorting"])
   end
 
 
 
-  #return an array containing the league stubs that can be used to dynamically
-  #load leagues later on.
-  def self.get_league_names
-    res = Array.new
-
+  #downloads the data items that contain both the name and the download
+  #parameter for all the leagues in this federation
+  def self.get_leagues_stub_data_list
     uri = URI("http://volleybieb.be/AjaxVVBWedstijden.php")
 
     #get a JSON file containing all league names and their abbreviations
     post_options = {"wattedoen" => "2", "reekstype" => "1", "provincie" => "6"}
     json_file = Net::HTTP.post_form(uri, post_options).body
 
-    leagues = JSON.parse(json_file)
-
-    #create league stubs for all the leagues
-    leagues.each do |l|
-      tmp = Bvt::LeagueStub.new(l["reeksnaam"], l["reeksafkorting"])
-      res.push(tmp)
-    end
-
-    return res
+    return JSON.parse(json_file)
   end
 
 
 
-  #load a league based on a parameter that has to be given to an online form
-  #or API
-  def self.load_league(league_stub)
-    res = nil
-
-    if league_stub
-      tmp_file = open("http://volleybieb.be/AjaxVVBWedstijden.php?wattedoen=1&provincie=6&reeks=#{league_stub.post_parameter}&competitie=1&team=0&datumbegin=0&datumeind=0&stamnummer=0")
-      json_file = tmp_file.read
-      games = JSON.parse(json_file)
-
-      #create the league if games were Found
-      if games && games.length > 0
-        res = Bvt::League.new(league_stub.name)
-        games.each do |g|
-          res.add_game(create_game(g))
-        end
-      end
-    end
-
-    return res
+  #downloads game information of a given league
+  def self.get_league_games(league_stub)
+    tmp_file = open("http://volleybieb.be/AjaxVVBWedstijden.php?wattedoen=1&provincie=6&reeks=#{league_stub.post_parameter}&competitie=1&team=0&datumbegin=0&datumeind=0&stamnummer=0")
+    json_file = tmp_file.read
+    return JSON.parse(json_file)
   end
 end

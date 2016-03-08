@@ -33,11 +33,6 @@ class Loader
   def self.get_league_names
     res = Array.new
 
-    doc = Nokogiri::HTML(open('http://volley-avf.be/bolt/kalenders'))
-    leagues_holder = doc.css("select#comp_comp")[0]
-    leagues = leagues_holder.css("option").to_a
-    leagues.delete_at(0)  #first item is empty
-
     leagues = get_leagues_stub_data_list
 
     #push all league names into the res array

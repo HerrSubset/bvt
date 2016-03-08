@@ -22,6 +22,7 @@ end
 require "bvt/league.rb"
 require "bvt/game.rb"
 require "bvt/federation.rb"
+require "bvt/loader.rb"
 require "bvt/vvb_loader.rb"
 require "bvt/avf_loader.rb"
 require "bvt/kovv_loader.rb"
