@@ -1,3 +1,7 @@
+require "open-uri"
+require "nokogiri"
+
+
 
 class Bvt::VlmLoader < Loader
 
@@ -35,5 +39,48 @@ class Bvt::VlmLoader < Loader
   end
 
 
+
+  #downloads game information of a given league
+  def self.get_league_games(league_stub)
+    res = []
+
+    doc = Nokogiri::HTML(open("http://vlmbrabant.be/compet/uitslagen-#{league_stub.post_parameter}.htm"))
+    tables = doc.css("body table")
+
+    tables.each do |t|
+      #add all the table rows of this table to the res array
+      res.concat(t.css("tr"))
+    end
+
+    return res
+  end
+
+
+
+  #creates a new game given a table row
+  #TODO: create a unique ID for all games
+  def self.create_game(game_row)
+    tds = game_row.css("td")
+    home_t = tds[4].text
+    away_t = tds[5].text
+    id = tds[0].text
+
+    d = Date.strptime(tds[2].text, "%d/%m/%y")
+    hour = tds[3].text[0..1].to_i
+    minutes = tds[3].text[3..4].to_i
+    date = DateTime.new(d.year, d.month, d.day, hour, minutes)
+
+    #check if results are available
+    if tds[6].text != ""
+      home_s = tds[6].text[0]
+      away_s = tds[6].text[2]
+
+      return Bvt::Game.new(id, home_t, away_t, date, home_s, away_s)
+
+    #return game without scores
+    else
+      return Bvt::Game.new(id, home_t, away_t, date)
+    end
+  end
 
 end
