@@ -121,7 +121,39 @@ class Bvt::League
   def sort_ranking(ranking_hash)
     res = ranking_hash.values
 
-    res.sort! { |x,y| y["points"] - x["points"]}
+    res.sort! { |x,y| compare_ranking_lines(x, y)}
+
+    return res
+  end
+
+
+  #sort lines first on points, then on won sets and finally on lost sets
+  def compare_ranking_lines(a, b)
+    res = 0
+
+    if a["points"] < b["points"]
+      res = 1
+
+    elsif b["points"] < a["points"]
+      res = -1
+
+    else
+      #tied in points
+      if a["won_sets"] < b["won_sets"]
+        res = 1
+
+      elsif b["won_sets"] < a["won_sets"]
+        res = -1
+
+      else
+        #tied in won sets
+        if a["lost_sets"] < b["lost_sets"]
+          res = -1
+        elsif b["lost_sets"] < a["lost_sets"]
+          res = 1
+        end
+      end
+    end
 
     return res
   end
