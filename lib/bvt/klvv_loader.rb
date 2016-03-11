@@ -40,4 +40,38 @@ class Bvt::KlvvLoader < Loader
     return Bvt::LeagueStub.new(stub_data[0], stub_data[1])
   end
 
+
+
+  #downloads game information of a given league
+  def self.get_league_games(league_stub)
+    tmp_file = open("https://klvv.be/server/seriedata.php?serieId=#{league_stub.post_parameter}")
+    json_file = JSON.parse(tmp_file.read)
+    return json_file["matches"]
+  end
+
+
+
+  #creates a new game given a game hash
+  def self.create_game(game_hash)
+    home_t = game_hash["homeTeam"]
+    away_t = game_hash["visitorTeam"]
+    id = game_hash["id"]
+
+    #get time and add 2 hours for timezone reasons
+    timestamp = game_hash["datetime"] + 7200000
+    d = DateTime.strptime(timestamp.to_s, "%Q")
+
+    #check if results are available
+    if game_hash["homeSets"] != 0 || game_hash["visitorSets"] != 0
+      home_s = game_hash["homeSets"]
+      away_s = game_hash["visitorSets"]
+
+      return Bvt::Game.new(id, home_t, away_t, d, home_s, away_s)
+
+    #return game without scores
+    else
+      return Bvt::Game.new(id, home_t, away_t, d)
+    end
+  end
+
 end

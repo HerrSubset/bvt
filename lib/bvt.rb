@@ -11,6 +11,9 @@ class Bvt
 
     elsif federation_name.downcase == "kovv"
       f = Federation.new("KOVV", KovvLoader)
+
+    elsif federation_name.downcase == "klvv"
+      f = Federation.new("KLVV", KlvvLoader)
     end
 
     return f
