@@ -25,7 +25,7 @@ class Bvt
 
 
   #return a list of all available leagues
-  def get_league_names
+  def self.get_federation_names
     return "vvb,avf,kovv,klvv,vlm".split(",")
   end
 end
