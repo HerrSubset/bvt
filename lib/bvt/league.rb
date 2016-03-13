@@ -138,19 +138,24 @@ class Bvt::League
       res = -1
 
     else
-      #tied in points
-      if a["won_sets"] < b["won_sets"]
+      a_won_games = a["3_points"] + a["2_points"]
+      b_won_games = b["3_points"] + b["2_points"]
+
+      if a_won_games < b_won_games
         res = 1
 
-      elsif b["won_sets"] < a["won_sets"]
+      elsif b_won_games < a_won_games
         res = -1
 
       else
-        #tied in won sets
-        if a["lost_sets"] < b["lost_sets"]
-          res = -1
-        elsif b["lost_sets"] < a["lost_sets"]
+        #tied in won games, look at ratio won sets/lost sets
+        a_ratio = a["won_sets"].to_f / a["lost_sets"]
+        b_ratio = b["won_sets"].to_f / b["lost_sets"]
+
+        if a_ratio < b_ratio
           res = 1
+        elsif b_ratio < a_ratio
+          res = -1
         end
       end
     end
