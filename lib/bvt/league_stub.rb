@@ -1,6 +1,7 @@
+# a class to hold a league's name and the post parameter that's needed to
+# retrieve those league's games from the web
 class Bvt::LeagueStub
-
-  #constructor
+  # constructor
   def initialize(name, post_parameter = nil)
     @name = name
 
@@ -12,9 +13,7 @@ class Bvt::LeagueStub
     end
   end
 
-
-
-  #getters
+  # getters
   attr_reader :post_parameter
   attr_reader :name
 end

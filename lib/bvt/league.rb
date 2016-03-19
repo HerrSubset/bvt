@@ -62,50 +62,50 @@ class Bvt::League
   def get_rankings
     #create tmp hash storage for all the rows in the rankings table
     row_holder = Hash.new { |hash, key| hash[key] =
-            {"played" => 0, "3_points" => 0, "2_points" => 0, "1_point" => 0,
-            "0_points" => 0, "won_sets" => 0, "lost_sets" => 0, "points" => 0,
-            "name" => key}}
+            {'played' => 0, '3_points' => 0, '2_points' => 0, '1_point' => 0,
+            '0_points' => 0, 'won_sets' => 0, 'lost_sets' => 0, 'points' => 0,
+            'name' => key}}
 
     @games.each do |g|
         if g.has_been_played?
           #add played game for both teams
-          row_holder[g.home_team]["played"] += 1
-          row_holder[g.away_team]["played"] += 1
+          row_holder[g.home_team]['played'] += 1
+          row_holder[g.away_team]['played'] += 1
 
           #add won sets for each team
-          row_holder[g.home_team]["won_sets"] += g.home_sets
-          row_holder[g.away_team]["won_sets"] += g.away_sets
+          row_holder[g.home_team]['won_sets'] += g.home_sets
+          row_holder[g.away_team]['won_sets'] += g.away_sets
 
           #add lost sets for each team
-          row_holder[g.home_team]["lost_sets"] += g.away_sets
-          row_holder[g.away_team]["lost_sets"] += g.home_sets
+          row_holder[g.home_team]['lost_sets'] += g.away_sets
+          row_holder[g.away_team]['lost_sets'] += g.home_sets
 
           #handle all different game outcomes, prepare for ugly code
           #handle 3-0 and 3-1
           if (g.home_sets == 3) && (g.away_sets < 2)
-            row_holder[g.home_team]["points"] += 3
-            row_holder[g.home_team]["3_points"] += 1
-            row_holder[g.away_team]["0_points"] += 1
+            row_holder[g.home_team]['points'] += 3
+            row_holder[g.home_team]['3_points'] += 1
+            row_holder[g.away_team]['0_points'] += 1
 
           #handle 3-2
           elsif (g.home_sets == 3) && (g.away_sets == 2)
-            row_holder[g.home_team]["points"] += 2
-            row_holder[g.away_team]["points"] += 1
-            row_holder[g.home_team]["2_points"] += 1
-            row_holder[g.away_team]["1_point"] += 1
+            row_holder[g.home_team]['points'] += 2
+            row_holder[g.away_team]['points'] += 1
+            row_holder[g.home_team]['2_points'] += 1
+            row_holder[g.away_team]['1_point'] += 1
 
           #handle 2-3
           elsif (g.home_sets == 2) && (g.away_sets ==3)
-            row_holder[g.away_team]["points"] += 2
-            row_holder[g.home_team]["points"] += 1
-            row_holder[g.home_team]["1_point"] += 1
-            row_holder[g.away_team]["2_points"] += 1
+            row_holder[g.away_team]['points'] += 2
+            row_holder[g.home_team]['points'] += 1
+            row_holder[g.home_team]['1_point'] += 1
+            row_holder[g.away_team]['2_points'] += 1
 
           #handle 0-3 and 1-3
           elsif (g.home_sets < 2) && (g.away_sets == 3)
-            row_holder[g.away_team]["points"] += 3
-            row_holder[g.home_team]["0_points"] += 1
-            row_holder[g.away_team]["3_points"] += 1
+            row_holder[g.away_team]['points'] += 3
+            row_holder[g.home_team]['0_points'] += 1
+            row_holder[g.away_team]['3_points'] += 1
           end
         end
     end
@@ -131,15 +131,15 @@ class Bvt::League
   def compare_ranking_lines(a, b)
     res = 0
 
-    if a["points"] < b["points"]
+    if a['points'] < b['points']
       res = 1
 
-    elsif b["points"] < a["points"]
+    elsif b['points'] < a['points']
       res = -1
 
     else
-      a_won_games = a["3_points"] + a["2_points"]
-      b_won_games = b["3_points"] + b["2_points"]
+      a_won_games = a['3_points'] + a['2_points']
+      b_won_games = b['3_points'] + b['2_points']
 
       if a_won_games < b_won_games
         res = 1
@@ -149,8 +149,8 @@ class Bvt::League
 
       else
         #tied in won games, look at ratio won sets/lost sets
-        a_ratio = a["won_sets"].to_f / a["lost_sets"]
-        b_ratio = b["won_sets"].to_f / b["lost_sets"]
+        a_ratio = a['won_sets'].to_f / a['lost_sets']
+        b_ratio = b['won_sets'].to_f / b['lost_sets']
 
         if a_ratio < b_ratio
           res = 1

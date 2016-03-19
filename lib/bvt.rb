@@ -1,44 +1,39 @@
+# this class' task is to return a league object given a certain league's name.
 class Bvt
   def self.load_federation(federation_name)
-    #make sure this function returns at least nil
-    f = nil
+    case federation_name.downcase
+    when 'vvb'
+      Federation.new('VVB', VvbLoader)
 
-    if federation_name.downcase == "vvb"
-      f = Federation.new("VVB", VvbLoader)
+    when 'avf'
+      Federation.new('AVF', AvfLoader)
 
-    elsif federation_name.downcase == "avf"
-      f = Federation.new("AVF", AvfLoader)
+    when 'kovv'
+      Federation.new('KOVV', KovvLoader)
 
-    elsif federation_name.downcase == "kovv"
-      f = Federation.new("KOVV", KovvLoader)
+    when 'klvv'
+      Federation.new('KLVV', KlvvLoader)
 
-    elsif federation_name.downcase == "klvv"
-      f = Federation.new("KLVV", KlvvLoader)
-
-    elsif federation_name.downcase == "vlm"
-      f = Federation.new("VLM", VlmLoader)
+    when 'vlm'
+      Federation.new('VLM', VlmLoader)
 
     end
-
-    return f
   end
 
-
-  #return a list of all available leagues
+  # return a list of all available leagues
   def self.get_federation_names
-    return "vvb,avf,kovv,klvv,vlm".split(",")
+    'vvb,avf,kovv,klvv,vlm'.split(',')
   end
 end
 
-
-#import other parts of the library
-require "bvt/league.rb"
-require "bvt/game.rb"
-require "bvt/federation.rb"
-require "bvt/loader.rb"
-require "bvt/vvb_loader.rb"
-require "bvt/avf_loader.rb"
-require "bvt/kovv_loader.rb"
-require "bvt/klvv_loader.rb"
-require "bvt/vlm_loader.rb"
-require "bvt/league_stub.rb"
+# import other parts of the library
+require 'bvt/league.rb'
+require 'bvt/game.rb'
+require 'bvt/federation.rb'
+require 'bvt/loader.rb'
+require 'bvt/vvb_loader.rb'
+require 'bvt/avf_loader.rb'
+require 'bvt/kovv_loader.rb'
+require 'bvt/klvv_loader.rb'
+require 'bvt/vlm_loader.rb'
+require 'bvt/league_stub.rb'

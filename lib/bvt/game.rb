@@ -1,5 +1,6 @@
+# a class used to keep information about a game.
 class Bvt::Game
-  #constructor for a game
+  # constructor for a game
   def initialize(id, home_team, away_team, date, home_sets = 0, away_sets = 0)
     @id = id
     @home_team = home_team
@@ -9,9 +10,7 @@ class Bvt::Game
     @location = location
     @date = date
   end
-
-
-  #getters
+  # getters
   attr_reader :id
   attr_reader :home_team
   attr_reader :away_team
@@ -20,9 +19,7 @@ class Bvt::Game
   attr_reader :location
   attr_reader :date
 
-
-
-  #return this game's info in a single string
+  # return this game's info in a single string
   def to_s
     res = "#{@id}  #{date.strftime('%d/%m/%Y')}\t#{@home_team} - #{@away_team}"
 
@@ -30,19 +27,17 @@ class Bvt::Game
       res += "   #{@home_sets}-#{@away_sets}"
     end
 
-    return res
+    res
   end
 
-
-  #checks if a game has been played. This can be verified by checking if one of
-  #the set scores is different from 0
+  # checks if a game has been played. This can be verified by checking if one of
+  # the set scores is different from 0
   def has_been_played?
-    return (@home_sets != 0) || (@away_sets != 0)
+    (@home_sets != 0) || (@away_sets != 0)
   end
 
-
-  #overwrite the equality operator for the game class
-  def ==(game)
-    return (game.class == Bvt::Game) && (@id == game.id)
+  # overwrite the equality operator for the game class
+  def ==(other)
+    (other.class == Bvt::Game) && (@id == other.id)
   end
 end
