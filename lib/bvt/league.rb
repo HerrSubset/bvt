@@ -107,6 +107,11 @@ class Bvt::League
             row_holder[g.home_team]['0_points'] += 1
             row_holder[g.away_team]['3_points'] += 1
           end
+
+        # make sure hash is generated when no games have been played yet
+        else
+          row_holder[g.home_team]['played'] += 0
+          row_holder[g.away_team]['played'] += 0
         end
     end
 
